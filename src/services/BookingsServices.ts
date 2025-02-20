@@ -126,21 +126,21 @@ export const findApprovedBookings = async (
           lte(bookingsTable.checkIn, checkInDate),
           gte(bookingsTable.checkOut, checkInDate),
           eq(bookingsTable.property_id, property_id),
-          eq(bookingsTable.booking_status, "APPROVED")
+          ne(bookingsTable.booking_status, "APPROVED")
         ),
         // New check-out date falls between existing booking
         and(
           lte(bookingsTable.checkIn, checkOutDate),
           gte(bookingsTable.checkOut, checkOutDate),
           eq(bookingsTable.property_id, property_id),
-          eq(bookingsTable.booking_status, "APPROVED")
+          ne(bookingsTable.booking_status, "APPROVED")
         ),
         // New booking completely encompasses an existing booking
         and(
           gte(bookingsTable.checkIn, checkInDate),
           lte(bookingsTable.checkOut, checkOutDate),
           eq(bookingsTable.property_id, property_id),
-          eq(bookingsTable.booking_status, "APPROVED")
+          ne(bookingsTable.booking_status, "APPROVED")
         )
       ),
     });

@@ -260,6 +260,18 @@ export const approveBooking = async (req: Request, res: Response) => {
         "You are not allowed to approve this application"
       );
 
+    const sameRangeRequests = await BookingServices.findApprovedBookings(
+      propety.property_id,
+      bookingRequest.checkIn,
+      bookingRequest.checkOut
+    );
+    if (sameRangeRequests.length > 0) {
+      await Promise.all(
+        sameRangeRequests.map(async (bookrequest) => {
+          await BookingServices.consoleApplication(bookrequest.booking_id);
+        })
+      );
+    }
     await BookingServices.approveApplication(booking_id);
     const newbookingRequest = await BookingServices.findById(booking_id);
 
