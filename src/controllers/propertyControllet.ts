@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import * as PropertyServices from "../services/PropertyServices";
+import * as ImageServices from "../services/ImagesServices";
+import * as propertyAmenity from "../services/AmenityServices";
 import { generateId } from "../utils/generateId";
 import ApiError from "../utils/ApiError";
 import httpStatus from "http-status";
@@ -58,7 +60,18 @@ export const findMany = async (req: Request, res: Response) => {
     const properties = await PropertyServices.findMany(query.skip, query.limit);
     if (!properties)
       throw new ApiError(httpStatus.NOT_FOUND, "There is not Properites");
-    respond(res, true, "Propeties found successfully", properties);
+    const result = await Promise.all(
+      properties.map(async (property) => {
+        const propertyImages = await ImageServices.findMany(
+          property.property_id
+        );
+        const propertyAmenities = await propertyAmenity.findByPropertyId(
+          property.property_id
+        );
+        return { ...property, propertyImages, propertyAmenities };
+      })
+    );
+    respond(res, true, "Propeties found successfully", result);
   } catch (error: any) {
     console.error("Error forget password:", error);
     return res.status(error.statusCode || 500).json({
@@ -74,7 +87,15 @@ export const findById = async (req: Request, res: Response) => {
     const property = await PropertyServices.findById(property_id);
     if (!property)
       throw new ApiError(httpStatus.NOT_FOUND, "Property does not exist.");
-    respond(res, true, "Property foudn successfully", property);
+    const propertyImages = await ImageServices.findMany(property_id);
+    const propertyAmenities = await propertyAmenity.findByPropertyId(
+      property_id
+    );
+    respond(res, true, "Property foudn successfully", {
+      ...property,
+      propertyImages,
+      propertyAmenities,
+    });
   } catch (error: any) {
     console.error("Error forget password:", error);
     return res.status(error.statusCode || 500).json({
