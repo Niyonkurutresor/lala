@@ -10,6 +10,7 @@ import {
   int,
 } from "drizzle-orm/mysql-core";
 import { integer, jsonb, numeric } from "drizzle-orm/pg-core";
+import { string } from "joi";
 /**
  * ********************* start of enum *****************************
  */
@@ -79,9 +80,10 @@ export const propertyAmenitiesTable = mysqlTable("property_amenities", {
   property_id: varchar("property_id", { length: 255 })
     .references(() => propertiesTable.property_id)
     .notNull(),
-  name: varchar("name", { length: 100 }).notNull(),
-  category: varchar("category", { length: 50 }).notNull(),
-  icon: varchar("icon", { length: 255 }),
+
+  amenity_id: varchar("amenity_id", { length: 20 }).references(
+    () => amenityTable.id
+  ),
   deleted_at: timestamp("deleted_at"),
   status: DefaultStatusEnum.default("ACTIVE"),
 });
@@ -201,6 +203,17 @@ export const paymentsTable = mysqlTable("payments", {
   updatedAt: timestamp("updated_at").defaultNow(),
   deleted_at: timestamp("deleted_at"),
   status: DefaultStatusEnum.default("ACTIVE"),
+});
+
+export const amenityTable = mysqlTable("amenity", {
+  id: varchar("aminity_id", { length: 20 }).primaryKey().notNull(),
+  name: varchar("name", { length: 244 }).notNull(),
+  amenityCode: varchar("aminity_category", { length: 20 }).notNull(),
+});
+
+export const aminityCategoryTable = mysqlTable("aminity_category", {
+  id: varchar("code", { length: 20 }).primaryKey().notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
 });
 
 //************************** Relations ***************************** */

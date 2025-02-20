@@ -1,9 +1,7 @@
 export interface Create {
   propertyAmenity_id: string;
   property_id: string;
-  name: string;
-  category: string;
-  icon: string;
+  amenity_id: string;
 }
 
 export interface UpdateAmenity {

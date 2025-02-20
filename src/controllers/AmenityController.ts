@@ -8,20 +8,16 @@ import respond from "../utils/response";
 export const create = async (req: Request, res: Response) => {
   try {
     const propertyAmenity_id = generateId();
-    const { property_id } = req.body;
-
+    const { property_id, amenity_id } = req.body;
     const property = await ProperyServices.findById(property_id);
     if (!property)
       throw new ApiError(httpStatus.NOT_FOUND, "Property does not exist.");
-    let icon = null;
-    if (req.file !== undefined) {
-      icon = `./public/files/${req.file.filename}`;
-    }
+    const aminity = await AmenityServices.findAmintyById(amenity_id);
+    if (!aminity)
+      throw new ApiError(httpStatus.NOT_FOUND, "Aminity does not exist");
     await AmenityServices.create({
       ...req.body,
       propertyAmenity_id,
-      property_id,
-      icon,
     });
     const amenity = await AmenityServices.findById(propertyAmenity_id);
     if (!amenity)

@@ -1,6 +1,6 @@
 import * as AmenityServices from "../services/AmenityServices";
 import { and, eq, ne } from "drizzle-orm";
-import { propertyAmenitiesTable } from "../../drizzle/schema";
+import { amenityTable, propertyAmenitiesTable } from "../../drizzle/schema";
 import { db } from "../config/dbConnection";
 import { Create } from "../types/amenity";
 
@@ -37,11 +37,11 @@ export const findMay = async (offset: number, limit: number) => {
   }
 };
 
-export const findById = async (amenity_id: string) => {
+export const findById = async (propertyAmenity_id: string) => {
   try {
     return await db.query.propertyAmenitiesTable.findFirst({
       where: and(
-        eq(propertyAmenitiesTable.propertyAmenity_id, amenity_id),
+        eq(propertyAmenitiesTable.propertyAmenity_id, propertyAmenity_id),
         ne(propertyAmenitiesTable.status, "DELETED")
       ),
     });
@@ -50,6 +50,15 @@ export const findById = async (amenity_id: string) => {
   }
 };
 
+export const findAmintyById = async (aminity_id: string) => {
+  try {
+    return await db.query.amenityTable.findFirst({
+      where: eq(amenityTable.id, aminity_id),
+    });
+  } catch (error) {
+    throw error;
+  }
+};
 export const findByPropertyId = async (property_id: string) => {
   try {
     return await db.query.propertyAmenitiesTable.findMany({

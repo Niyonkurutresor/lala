@@ -6,6 +6,7 @@ import propertyImages from "./propertyImages.routes";
 import booking from "./bookings.routes";
 import conversation from "./conversations.routes";
 import message from "./message.routes";
+import amenitiesCategories from "./aminitiesCategories.routes";
 const router = express.Router();
 const defaultRoutes = [
   {
@@ -35,6 +36,10 @@ const defaultRoutes = [
   {
     path: "/message",
     route: message,
+  },
+  {
+    path: "/amenitycategory",
+    route: amenitiesCategories,
   },
 ];
 defaultRoutes.forEach((route) => {

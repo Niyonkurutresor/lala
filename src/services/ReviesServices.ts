@@ -1,58 +1,42 @@
 import { eq, ne } from "drizzle-orm";
-import { propertiesTable } from "../../drizzle/schema";
+import { propertiesTable, reviewsTable } from "../../drizzle/schema";
 import { db } from "../config/dbConnection";
-import { CreateProperty, UpdateProperty } from "../types/property";
+import { CreateReview, UpdateReview } from "../types/review";
 
-export const create = async (data: CreateProperty) => {
+export const create = async (data: CreateReview) => {
   try {
-    return await db.insert(propertiesTable).values(data);
+    return await db.insert(reviewsTable).values(data);
   } catch (error) {
     throw error;
   }
 };
 
-export const update = async (data: UpdateProperty) => {
+export const update = async (data: UpdateReview) => {
   try {
     return await db
-      .update(propertiesTable)
+      .update(reviewsTable)
       .set(data)
-      .where(eq(propertiesTable.property_id, data.property_id));
+      .where(eq(reviewsTable.review_id, data.review_id));
   } catch (error) {
     throw error;
   }
 };
 
-export const findMany = async (offset: number, limit: number) => {
+export const findByProperyId = async (property_id: string) => {
   try {
-    return await db.query.propertiesTable.findMany({
-      where: ne(propertiesTable.status, "DELETED"),
-      offset,
-      limit,
+    return await db.query.reviewsTable.findMany({
+      where: eq(reviewsTable.property_Id, property_id),
     });
   } catch (error) {
     throw error;
   }
 };
 
-export const findById = async (property_id: string) => {
+export const findByBookingId = async (booking_id: string) => {
   try {
-    return await db.query.propertiesTable.findFirst({
-      where: eq(propertiesTable.property_id, property_id),
+    return await db.query.reviewsTable.findMany({
+      where: eq(reviewsTable.booking_id, booking_id),
     });
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const deleteById = async (property_id: string) => {
-  try {
-    return await db
-      .update(propertiesTable)
-      .set({
-        deleted_at: new Date(),
-        status: "DELETED",
-      })
-      .where(eq(propertiesTable.property_id, property_id));
   } catch (error) {
     throw error;
   }
