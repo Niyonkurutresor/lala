@@ -4,7 +4,7 @@ import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import dotenv from "dotenv";
 import { db } from "./dbConnection";
 import { usersTable } from "../../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { generateId } from "../utils/generateId";
 
 dotenv.config();
@@ -16,7 +16,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      callbackURL: `https://lala-eiv6.onrender.com/api/v1/auth/google/callback`,
+      callbackURL: `${process.env.BASE_URL}/api/v1/auth/google/callback`,
       proxy: true,
     },
     async (accessToken, refreshToken, profile, done) => {
@@ -25,7 +25,12 @@ passport.use(
         const existingUser = await db
           .select()
           .from(usersTable)
-          .where(eq(usersTable.google_id, profile.id))
+          .where(
+            or(
+              eq(usersTable.google_id, profile.id),
+              eq(usersTable.email, profile.emails![0].value)
+            )
+          )
           .limit(1);
         if (existingUser && existingUser.length > 0) {
           return done(null, existingUser[0]);

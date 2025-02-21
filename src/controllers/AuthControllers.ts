@@ -21,9 +21,9 @@ export const googleAuthCallback = async (
     const user = req.user as User;
     const token = await sign({ user_id: user.user_id });
     res.redirect(
-      `http://localhost:5173?token=${token}&user=${encodeURIComponent(
-        JSON.stringify(user)
-      )}`
+      `${
+        process.env.FRONT_END_BASE_URL
+      }?token=${token}&user=${encodeURIComponent(JSON.stringify(user))}`
     );
     // res.status(200).json({
     //   success: true,
