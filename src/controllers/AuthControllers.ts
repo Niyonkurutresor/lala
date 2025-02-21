@@ -20,6 +20,10 @@ export const googleAuthCallback = async (
   try {
     const user = req.user as User;
     const token = await sign({ user_id: user.user_id });
+    const validu = await userServices.findById(user.user_id);
+    if (validu && !validu.google_id) {
+      return res.redirect(`${process.env.FRONT_END_BASE_URL}`);
+    }
     res.redirect(
       `${
         process.env.FRONT_END_BASE_URL
