@@ -3,6 +3,7 @@ import * as PropertyServices from "../services/PropertyServices";
 import * as ImageServices from "../services/ImagesServices";
 import * as propertyAmenity from "../services/AmenityServices";
 import * as UserServices from "../services/userServices";
+import * as AmenityCategory from "../services/aminitycategoriesServices";
 import { generateId } from "../utils/generateId";
 import ApiError from "../utils/ApiError";
 import httpStatus from "http-status";
@@ -89,8 +90,14 @@ export const findById = async (req: Request, res: Response) => {
       throw new ApiError(httpStatus.NOT_FOUND, "Property does not exist.");
     const hoster = await UserServices.findById(property.host_id);
     const propertyImages = await ImageServices.findMany(property_id);
-    const propertyAmenities = await propertyAmenity.findByPropertyId(
-      property_id
+    const pams = await propertyAmenity.findByPropertyId(property_id);
+    const propertyAmenities = await Promise.all(
+      pams.map(async (am) => {
+        const aminity = await AmenityCategory.getAmityByItOwnId(
+          am?.amenity_id ?? ""
+        );
+        return { ...am, aminty: aminity };
+      })
     );
     respond(res, true, "Property foudn successfully", {
       ...property,

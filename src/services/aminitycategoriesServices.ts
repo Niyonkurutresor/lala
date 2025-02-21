@@ -19,3 +19,13 @@ export const getAmityByCategoryId = async (categoryId: string) => {
     throw error;
   }
 };
+
+export const getAmityByItOwnId = async (aminity_id: string) => {
+  try {
+    return await db.query.amenityTable.findFirst({
+      where: eq(amenityTable.id, aminity_id),
+    });
+  } catch (error) {
+    throw error;
+  }
+};
