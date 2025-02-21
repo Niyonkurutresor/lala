@@ -7,6 +7,7 @@ import { generateId } from "../utils/generateId";
 import respond from "../utils/response";
 import { date } from "joi";
 import { queryFilter } from "../utils/queryFilter";
+import userServices from "../services/userServices";
 
 export const create = async (req: Request, res: Response) => {
   try {
@@ -158,12 +159,19 @@ export const findByRenterId = async (req: Request, res: Response) => {
     const query = queryFilter(req.query);
     const user_Id = req.authData.user_id;
 
-    const request = await BookingServices.findByRenter(
+    const requests = await BookingServices.findByRenter(
       user_Id,
       query.skip,
       query.limit
     );
-    return respond(res, true, "Bookings requests found sucessfully.", request);
+    const history = await Promise.all(
+      requests.map(async (request) => {
+        const property = await PropertyServices.findById(request.property_id);
+        const hoster = await userServices.findById(property?.host_id ?? "");
+        return { ...request, property, hoster };
+      })
+    );
+    return respond(res, true, "Bookings requests found sucessfully.", history);
   } catch (error: any) {
     console.error("Error forget password:", error);
     return res.status(error.statusCode || 500).json({

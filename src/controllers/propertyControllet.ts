@@ -4,6 +4,7 @@ import * as ImageServices from "../services/ImagesServices";
 import * as propertyAmenity from "../services/AmenityServices";
 import * as UserServices from "../services/userServices";
 import * as AmenityCategory from "../services/aminitycategoriesServices";
+import * as BookingServices from "../services/BookingsServices";
 import { generateId } from "../utils/generateId";
 import ApiError from "../utils/ApiError";
 import httpStatus from "http-status";
@@ -105,6 +106,39 @@ export const findById = async (req: Request, res: Response) => {
       propertyImages,
       propertyAmenities,
     });
+  } catch (error: any) {
+    console.error("Error forget password:", error);
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+};
+
+export const getBookingsByHosterId = async (req: Request, res: Response) => {
+  try {
+    const { hoster_id } = req.params;
+    const hoster = await UserServices.findById(hoster_id);
+    if (!hoster)
+      throw new ApiError(httpStatus.NOT_FOUND, "Hoster does not exist.");
+    const properties = await PropertyServices.findByHosterId(hoster_id);
+    if (!properties)
+      throw new ApiError(httpStatus.NOT_FOUND, "Properties does not exist.");
+    const pl = await Promise.all(
+      properties.map(async (property) => {
+        const bookings = await BookingServices.findManyByProperyId(
+          property.property_id
+        );
+        return await Promise.all(
+          bookings.map(async (book) => {
+            const property = await PropertyServices.findById(book.property_id);
+            const hoster = await userServices.findById(property?.host_id ?? "");
+            return { ...book, property, hoster };
+          })
+        );
+      })
+    );
+    respond(res, true, "Bookings found successfully", pl.flat());
   } catch (error: any) {
     console.error("Error forget password:", error);
     return res.status(error.statusCode || 500).json({

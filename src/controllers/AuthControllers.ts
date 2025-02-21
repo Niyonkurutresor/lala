@@ -27,7 +27,7 @@ export const googleAuthCallback = async (
     res.redirect(
       `${
         process.env.FRONT_END_BASE_URL
-      }?token=${token}&user=${encodeURIComponent(JSON.stringify(user))}`
+      }/home?token=${token}&user=${encodeURIComponent(JSON.stringify(user))}`
     );
     // res.status(200).json({
     //   success: true,

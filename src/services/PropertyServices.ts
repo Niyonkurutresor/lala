@@ -47,6 +47,18 @@ export const findById = async (property_id: string) => {
   }
 };
 
+export const findByHosterId = async (hoster_id: string) => {
+  try {
+    return await db.query.propertiesTable.findMany({
+      where: and(
+        eq(propertiesTable.host_id, hoster_id),
+        ne(propertiesTable.status, "DELETED")
+      ),
+    });
+  } catch (error) {
+    throw error;
+  }
+};
 export const deleteById = async (property_id: string) => {
   try {
     return await db

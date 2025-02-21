@@ -36,6 +36,18 @@ export const findMany = async (offset: number, limit: number) => {
   }
 };
 
+export const findManyByProperyId = async (property_id: string) => {
+  try {
+    return await db.query.bookingsTable.findMany({
+      where: and(
+        ne(bookingsTable.status, "DELETED"),
+        eq(bookingsTable.property_id, property_id)
+      ),
+    });
+  } catch (error) {
+    throw error;
+  }
+};
 export const findById = async (booking_id: string) => {
   try {
     return await db.query.bookingsTable.findFirst({

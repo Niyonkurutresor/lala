@@ -27,6 +27,7 @@ router.get("/", PropertyContoroller.findMany);
 
 // get single
 router.get("/:property_id", PropertyContoroller.findById);
+router.get("/host/:hoster_id", PropertyContoroller.getBookingsByHosterId);
 
 // delete
 router.delete(
