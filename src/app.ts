@@ -25,17 +25,17 @@ app.use(express.urlencoded({ limit: "5mb", extended: true }));
 app.use(xss());
 app.use(compression());
 app.use(passport.initialize());
-app.use(
-  cors({
-    origin: [
-      "https://scec-fn.vercel.app",
-      "http://localhost:4200",
-      "http://localhost:4201",
-      "http://localhost:5173",
-    ],
-  })
-);
-app.options("*", cors());
+// app.use(
+//   cors({
+//     origin: [
+//       "https://scec-fn.vercel.app",
+//       "http://localhost:4200",
+//       "http://localhost:4201",
+//       "http://localhost:5173",
+//     ],
+//   })
+// );
+app.use("*", cors());
 app.use(passport.initialize());
 app.use("/files", express.static("public/files"));
 
