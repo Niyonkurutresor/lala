@@ -19,7 +19,7 @@ export const create = async (req: Request, res: Response) => {
             ImagesServices.create({
               ...req.body,
               image_id: generateId(),
-              url: `./public/files/${element.filename}`,
+              url: `/files/${element.filename}`,
               isPrimary: index == 0 ? true : false,
             })
         )
@@ -54,7 +54,7 @@ export const update = async (req: Request, res: Response) => {
     if (req.file !== undefined) {
       await ImagesServices.update({
         image_id: image_id,
-        url: `./public/files/${req.file.filename}`,
+        url: `/files/${req.file.filename}`,
       });
     }
     return respond(res, true, "Image updated successfully!");
