@@ -37,6 +37,8 @@ app.use(
 );
 app.options("*", cors());
 app.use(passport.initialize());
+app.use("/files", express.static("public/files"));
+
 // update checkout mid night
 initCheckoutCron();
 

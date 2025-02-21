@@ -19,6 +19,7 @@ export const googleAuthCallback = async (
 ): Promise<void> => {
   try {
     const user = req.user as User;
+    delete (user as any).id;
     const token = await sign({ user_id: user.user_id });
     if (!user.google_id) {
       return res.redirect(`${process.env.FRONT_END_BASE_URL}/sign-in`);
