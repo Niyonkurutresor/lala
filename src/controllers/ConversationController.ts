@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import * as UserServices from "../services/userServices";
 import * as PropertyServices from "../services/PropertyServices";
 import * as ConversationServices from "../services/ConversationServices";
@@ -24,9 +24,11 @@ export const create = async (req: Request, res: Response) => {
       propety.property_id
     );
     if (conv)
-      throw new ApiError(
-        httpStatus.BAD_REQUEST,
-        "Conversations alredy exist. on property between the users."
+      return respond(
+        res,
+        false,
+        "Conversations alredy exist. on property between the users.",
+        conv
       );
     const conversation_id = generateId();
     await ConversationServices.create({
