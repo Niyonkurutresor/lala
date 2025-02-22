@@ -56,14 +56,16 @@ export const create = async (req: Request, res: Response) => {
       throw new ApiError(httpStatus.BAD_REQUEST, "Email already exist");
     let avatar = null;
     if (req.file !== undefined) {
-      avatar = req.file.filename;
+      avatar = `https://lala-eiv6.onrender.com/files/${req.file.filename}`;
     }
     await userServices.create({
       ...req.body,
       user_id,
       password,
       email,
-      avatar,
+      avatar:
+        avatar ??
+        "https://res.cloudinary.com/kist/image/upload/v1711023040/scec/bs89knpuvkithg1wblng.jpg",
     });
     const user = await userServices.findById(user_id);
     if (!user)
