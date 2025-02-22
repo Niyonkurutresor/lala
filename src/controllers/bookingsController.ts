@@ -25,7 +25,7 @@ export const create = async (req: Request, res: Response) => {
       propety.property_id,
       req.authData.user_id
     );
-    if (alreadyBooked)
+    if (alreadyBooked.length > 0)
       throw new ApiError(
         httpStatus.UNAUTHORIZED,
         "You alredy booked this property"
